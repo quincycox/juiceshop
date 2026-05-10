@@ -1,0 +1,26 @@
+name: SAST Scan
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  sast:
+    name: Semgrep SAST
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/security-audit
