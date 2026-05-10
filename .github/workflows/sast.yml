@@ -1,4 +1,4 @@
-name: SAST Scan
+name: Security Pipeline
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   sast:
-    name: Semgrep SAST
+    name: SAST Scan
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +24,22 @@ jobs:
         uses: returntocorp/semgrep-action@v1
         with:
           config: p/security-audit
+
+  sca:
+    name: SCA Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
