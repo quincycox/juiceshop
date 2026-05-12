@@ -68,11 +68,23 @@ jobs:
         run: npm install --ignore-scripts
 
       - name: Start Juice Shop
-        run: |
-          npm start &
-          sleep 30
+        run: npm start &
         env:
           NODE_ENV: test
+
+      - name: Wait for Juice Shop to be ready
+        run: |
+          echo "Waiting for Juice Shop..."
+          for i in $(seq 1 60); do
+            if curl -s http://localhost:3000 > /dev/null; then
+              echo "Juice Shop is up!"
+              exit 0
+            fi
+            echo "Attempt $i: not ready yet, waiting 5s..."
+            sleep 5
+          done
+          echo "Juice Shop failed to start after 5 minutes"
+          exit 1
 
       - name: Run ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.14.0
