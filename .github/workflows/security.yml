@@ -1,0 +1,46 @@
+name: Security Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  sast:
+    name: SAST Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/security-audit
+
+  sca:
+    name: SCA Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: false
