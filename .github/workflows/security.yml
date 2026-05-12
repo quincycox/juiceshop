@@ -59,18 +59,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Start Juice Shop
-        run: npm start &
-        env:
-          NODE_ENV: test
+      - name: Start Juice Shop via Docker
+        run: |
+          docker run -d --name juice-shop -p 3000:3000 bkimminich/juice-shop
 
       - name: Wait for Juice Shop to be ready
         run: |
